@@ -29,7 +29,17 @@ import sys
 import threading
 import time
 from pathlib import Path
-import numpy as np
+
+# If numpy isn't importable (e.g. the script was launched with the system
+# python instead of the project venv), re-exec with the venv interpreter so
+# `python dreamer.py` just works no matter how it's invoked.
+try:
+    import numpy as np
+except ImportError:
+    venv_python = Path(__file__).resolve().parent / ".venv" / "bin" / "python3"
+    if venv_python.exists():
+        os.execv(str(venv_python), [str(venv_python)] + sys.argv)
+    raise
 
 LAYA_MODEL = "aac6fef/laya-mlx"
 
